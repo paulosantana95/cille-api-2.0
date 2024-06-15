@@ -36,3 +36,4 @@ RUN chown -R $user:$user /var/www
 RUN mkdir -p /home/$user/.composer && \
   chown -R $user:$user /home/$user/.composer
 
+RUN composer install
