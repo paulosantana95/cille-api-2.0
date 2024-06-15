@@ -1,44 +1,20 @@
-FROM php:8.3-fpm
+FROM richarvey/nginx-php-fpm:3.1.6
 
-# Arguments defined in docker-compose.yml
-ARG user
-ARG uid
+COPY . .
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-  git \
-  curl \
-  libpng-dev \
-  libonig-dev \
-  libxml2-dev \
-  zip \
-  unzip
+# Image config
+ENV SKIP_COMPOSER 1
+ENV WEBROOT /var/www/html/public
+ENV PHP_ERRORS_STDERR 1
+ENV RUN_SCRIPTS 1
+ENV REAL_IP_HEADER 1
 
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+# Laravel config
+ENV APP_ENV production
+ENV APP_DEBUG false
+ENV LOG_CHANNEL stderr
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+# Allow composer to run as root
+ENV COMPOSER_ALLOW_SUPERUSER 1
 
-# Get latest Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Set working directory
-WORKDIR /var/www
-
-# Ensure the working directory has the correct permissions
-RUN chown -R $user:$user /var/www
-
-# Copy the application code to the container
-COPY . /var/www
-
-# Use the existing user
-USER $user
-
-# Optionally, create the Composer directory and set permissions if needed
-RUN mkdir -p /home/$user/.composer && \
-  chown -R $user:$user /home/$user/.composer
-
-# Run composer install
-RUN composer install --no-interaction --optimize-autoloader --prefer-dist
-
+CMD ["/start.sh"]
