@@ -26,14 +26,19 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www
 
-# Use the existing user
-USER $user
-
 # Ensure the working directory has the correct permissions
 RUN chown -R $user:$user /var/www
+
+# Copy the application code to the container
+COPY . /var/www
+
+# Use the existing user
+USER $user
 
 # Optionally, create the Composer directory and set permissions if needed
 RUN mkdir -p /home/$user/.composer && \
   chown -R $user:$user /home/$user/.composer
 
-RUN composer install
+# Run composer install
+RUN composer install --no-interaction --optimize-autoloader --prefer-dist
+
