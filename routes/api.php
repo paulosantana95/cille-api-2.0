@@ -34,6 +34,7 @@ Route::controller(UserController::class)->group(function () {
     Route::post('{id}/avatar', 'updateAvatar')->name('user.avatar.update');
     Route::get('{id}', 'getUsers')->name('user.show');
     Route::patch('{id}', 'editUser')->name('user.update');
+    Route::delete('{id}', 'deleteUser')->name('user.delete');
   });
 })->middleware('auth:sanctum');
 

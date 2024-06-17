@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\User\DefaultAdminRequest;
+use App\Http\Requests\User\DeleteUserRequest;
 use App\Http\Requests\User\EditUserRequest;
 use App\Http\Requests\User\SaveCodeRequest;
 use App\Http\Requests\User\UpdateAvatarRequest;
@@ -71,5 +72,12 @@ class UserController extends Controller
     /** @var User $user */
     $user = User::query()->findOrFail($id);
     return $this->fileManager->getAvatar($user);
+  }
+
+  public function deleteUser(DeleteUserRequest $request, int $id): JsonResponse
+  {
+    $user = User::query()->findOrFail($id);
+    $user->delete();
+    return $this->respondOk('Success');
   }
 }
